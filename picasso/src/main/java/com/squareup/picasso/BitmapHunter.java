@@ -122,8 +122,8 @@ class BitmapHunter implements Runnable {
       int exifRotation) throws IOException {
     MarkableInputStream markStream = new MarkableInputStream(stream);
     stream = markStream;
-
-    long mark = markStream.savePosition(65536); // TODO fix this crap.
+    markStream.allowMarksToExpire(false);
+    long mark = markStream.savePosition(1024);
 
     final BitmapFactory.Options options = RequestHandler.createBitmapOptions(request);
     final boolean calculateSize = RequestHandler.requiresInSampleSize(options);
@@ -147,9 +147,9 @@ class BitmapHunter implements Runnable {
         BitmapFactory.decodeStream(stream, null, options);
         RequestHandler.calculateInSampleSize(request.targetWidth, request.targetHeight, options,
             request, exifRotation);
-
         markStream.reset(mark);
       }
+      markStream.allowMarksToExpire(true);
       Bitmap bitmap = BitmapFactory.decodeStream(stream, null, options);
       if (bitmap == null) {
         // Treat null as an IO exception, we will eventually retry.
