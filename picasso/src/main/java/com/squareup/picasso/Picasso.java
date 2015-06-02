@@ -290,11 +290,8 @@ public class Picasso {
    * @throws IllegalArgumentException if {@code path} is empty or blank string.
    */
   public RequestCreator load(String path) {
-    if (path == null) {
+    if (path == null || path.trim().length() == 0) {
       return new RequestCreator(this, null, 0);
-    }
-    if (path.trim().length() == 0) {
-      throw new IllegalArgumentException("Path must not be empty.");
     }
     return load(Uri.parse(path));
   }
